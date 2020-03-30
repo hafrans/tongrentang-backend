@@ -1,0 +1,37 @@
+server:
+  port: 8080
+ 
+spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  application:
+    name: WechatMp
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mydb
+    username: test
+    password: test1
+    
+
+wechat:
+  mp:
+    app-id: wx884bfb1e18e5912f
+    secret: 9298cb70cdfcad364c83f29b4081fcb9
+    grant-type: authorization_code
+    code2-session-uri: https://api.weixin.qq.com/sns/jscode2session?appid={appid}&secret={secret}&js_code={jscode}&grant_type=authorization_code
+    
+logging:
+  level:
+    root: info
+    
+pagehelper:
+  # dialect: postgresql 自动配置，手动配置会执行一个Class.forName反而出错
+  reasonable: true
+  auto-dialect: true
+  
+mybatis:
+  mapper-locations:
+    - classpath:/mapper/**/*.xml
+  
+  
+    
