@@ -11,17 +11,21 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hafrans.tongrentang.wechat.common.status.exception.StatusException;
 import com.hafrans.tongrentang.wechat.common.vo.ResponseData;
 
+import springfox.documentation.annotations.ApiIgnore;
+
 @RequestMapping("/")
 @RestController
 public class CommonIndexController {
 
-	@RequestMapping("/login")
+	@GetMapping("/login")
+	@ApiIgnore
 	public ResponseEntity<Map<String,Object>> login(){
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		map.put("errcode", 610000);
@@ -31,7 +35,8 @@ public class CommonIndexController {
 		return new ResponseEntity<Map<String,Object>>(map,HttpStatus.ACCEPTED);
 	} 
 	
-	@RequestMapping("/unauthorized")
+	@GetMapping("/unauthorized")
+	@ApiIgnore
 	public ResponseEntity<Map<String,Object>> unauthorized(){
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		map.put("errcode", 710000);
@@ -41,7 +46,8 @@ public class CommonIndexController {
 		return new ResponseEntity<Map<String,Object>>(map,HttpStatus.ACCEPTED);
 	}
 	
-	@RequestMapping("/loginfailed")
+	@GetMapping("/loginfailed")
+	@ApiIgnore
 	public ResponseData<Object> unauthorized(HttpServletRequest req){
 		StatusException se = (StatusException) req.getAttribute("err");
 		return ResponseData.Builder(se.getStatus(), se.getMessage(), Timestamp.from(Instant.now()), null);
