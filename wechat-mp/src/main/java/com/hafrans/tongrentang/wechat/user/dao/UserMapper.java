@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Many;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.One;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Results;
@@ -65,13 +66,34 @@ public interface UserMapper {
 			@Result(column="id",property="profile",one=@One(fetchType=FetchType.EAGER,select="com.hafrans.tongrentang.wechat.user.dao.UserProfileMapper.queryByUserProfileId" ))
 			
 	})
-	
-	
-	
 	@Select("select id, openid, union_id as unionid, session_key as sessionKey, is_wechat_user, username, "
 		  + "credentials, create_at as createAt, update_at as updateAt, lock_until as lockUntil "
 		  + "from users where id = #{id}")
 	public User queryByUserIdNotLazy(long id);
+	
+	
+	
+	
+	@ResultMap("user")
+	@Select("select id, openid, union_id as unionid, session_key as sessionKey, is_wechat_user, username, "
+			  + "credentials, create_at as createAt, update_at as updateAt, lock_until as lockUntil "
+			  + "from users where openid = #{openId}")
+	public User queryByOpenId(String openId);
+	
+	
+	@ResultMap("user")
+	@Select("select id, openid, union_id as unionid, session_key as sessionKey, is_wechat_user, username, "
+			  + "credentials, create_at as createAt, update_at as updateAt, lock_until as lockUntil "
+			  + "from users where union_id = #{unionId}")
+	public User queryByUnionId(String unionId);
+	
+	
+	@ResultMap("user")
+	@Select("select id, openid, union_id as unionid, session_key as sessionKey, is_wechat_user, username, "
+			  + "credentials, create_at as createAt, update_at as updateAt, lock_until as lockUntil "
+			  + "from users where username = #{username}")
+	public User queryByUsername(String username);
+	
 	
 	
 	
@@ -93,6 +115,9 @@ public interface UserMapper {
 	
 	@Update("update users set update_at = localtimestamp where id = #{id}")
 	public int updateTimeById(long id);
+	
+	@Update("update users set session_key = #{sessionKey} where id = #{id}")
+	public int updateSessionKeyById(@Param("id") long id, @Param("sessionKey") String sessionKey);
 	
 	
 	@Delete("delete from users where id = #{id}")

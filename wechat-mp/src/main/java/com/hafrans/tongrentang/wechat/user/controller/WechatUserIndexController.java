@@ -1,13 +1,15 @@
 package com.hafrans.tongrentang.wechat.user.controller;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,23 +22,42 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hafrans.tongrentang.wechat.common.security.SystemUserPrincipal;
 import com.hafrans.tongrentang.wechat.common.security.UserClaims;
-import com.hafrans.tongrentang.wechat.common.security.realm.JWTRealm;
+import com.hafrans.tongrentang.wechat.common.status.PlainStatus;
+import com.hafrans.tongrentang.wechat.common.status.exception.StatusException;
+import com.hafrans.tongrentang.wechat.common.vo.ResponseData;
 import com.hafrans.tongrentang.wechat.user.dao.UserMapper;
-import com.hafrans.tongrentang.wechat.user.domain.entity.User;
+import com.hafrans.tongrentang.wechat.user.domain.entity.UserProfile;
 import com.hafrans.tongrentang.wechat.user.domain.vo.Code2SessionResponse;
+import com.hafrans.tongrentang.wechat.user.exception.UserNotFoundException;
+import com.hafrans.tongrentang.wechat.user.service.UserService;
 import com.hafrans.tongrentang.wechat.user.service.WechatUserService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 
 @RequestMapping("/api/wx/v1/user")
 @RestController
+@Api(tags="微信小程序登录相关",value="WechatUserIndexController")
+@Slf4j
 public class WechatUserIndexController {
 
 	@Autowired
 	WechatUserService wechatUserService;
 	
 	@Autowired
+	UserService userService;
+	
+	@Autowired
 	UserMapper userMapper;
-		
-	@RequestMapping("/")
+	
+	
+	@GetMapping("/")
+	@ApiOperation(value="小程序登录系统ping",notes="系统运行时可以通过该接口测试系统是否能够正常使用",produces="json")
 	public ResponseEntity<Map<String,String>> index(){
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("ping", "pong");
@@ -44,22 +65,78 @@ public class WechatUserIndexController {
 		return new ResponseEntity<Map<String,String>>(map, HttpStatus.ACCEPTED);
 	}
 	
+	
 	@PostMapping("/login")
-	public String login(@RequestParam(name="js_code", required=true) String jsCode) {
+	@ApiOperation(httpMethod="POST",
+	              produces="application/json",
+	              value="小程序登录",
+	              notes="小程序尝试登录并返回令牌")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name="js_code",
+				          value="wx.login生产的jsCode串",
+				          dataTypeClass=String.class,
+				          allowEmptyValue=false,
+				          required=true,
+				          example="xasxsadasdsafregtfdas")
+	})
+	public ResponseData<Map<String,Object>> login(@RequestParam(name="js_code", required=true) String jsCode) throws UserNotFoundException, StatusException {
 		Code2SessionResponse resp = wechatUserService.login(jsCode);
-		return resp.getSessionKey();
+		System.out.println(resp);
+		if (resp.getOpenId() == null || "".equals(resp.getOpenId())) { // fetch openId from wechat server.
+			return ResponseData.Builder(PlainStatus.STATUS_LOGIN_FAILED_INVALID_OPENID,"js_code is invalid",null);
+		}// if
+		
+		String token = userService.loginByCode2Session(resp);
+		
+		Map<String,Object> map = new HashMap<String, Object>(1);
+		map.put("token", token);
+		
+		return ResponseData.Builder(PlainStatus.STATUS_LOGIN_SUCCESS,"login:success", map);
+		
 	}
 	
-	@PostMapping("/register")
-	public Object login(@RequestBody Map<String, String> body ) {
+	@GetMapping("/register")
+	public Map<String, String> login(@RequestBody Map<String, String> body ) {
 		return body;
 		
 	}
 	
-	@PostMapping("/refresh")
-	public String refresh() {
+	@GetMapping("/refresh")
+	@ApiOperation(value="更新令牌",notes="直接带token访问本接口刷新现有令牌")
+	@ApiResponses({
+		@ApiResponse(code=200,message="响应消息",response=UserClaims.class)
+	})
+	public ResponseData<Map<String,Object>>  refresh() throws StatusException, UserNotFoundException {
 		
-		return null;
+		SystemUserPrincipal principal = (SystemUserPrincipal) SecurityUtils.getSubject().getPrincipal();
+		if (principal == null) {
+			log.error("principal is null in refresh!");
+			throw new StatusException(PlainStatus.STATUS_FAILED, "system maintainence");
+		}
+		
+		String token = userService.refreshTokenByPrincipal(principal);
+		
+		Map<String,Object> map = new HashMap<String, Object>(1);
+		map.put("token", token);
+		return ResponseData.Builder(PlainStatus.STATUS_JWT_SUCCESS, "jwt update success", map);
+	}
+	
+	@RequiresRoles("useradmin")
+	@GetMapping("/userinfo")
+	public ResponseData<Map<String,Object>> userinfo() throws StatusException{
+		SystemUserPrincipal pp = (SystemUserPrincipal) SecurityUtils.getSubject().getPrincipal();
+		if (pp == null) {
+			log.error("principal is null in userinfo!");
+			throw new StatusException(PlainStatus.STATUS_FAILED, "system maintainence");
+		}
+		UserProfile profile = pp.getUser().getProfile();
+		Map<String,Object> map = new LinkedHashMap<String, Object>();
+		map.put("avatar_url",profile.getAvatarUrl());
+		map.put("gender",profile.getGender());
+		map.put("nick_name",profile.getNickName());
+		map.put("lang",profile.getLanguage());
+		
+		return ResponseData.Builder(PlainStatus.STATUS_OK, "userinfo:ok", Timestamp.from(Instant.now()), map);
 	}
 	
 	

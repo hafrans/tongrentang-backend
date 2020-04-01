@@ -16,4 +16,17 @@ public enum LoginUserType {
 	public String getType() {
 		return this.type;
 	}
+	
+	public static LoginUserType parse(String type) {
+		switch (type) {
+		case "WECHAT_MP":
+			return LoginUserType.WECHAT_MP;
+		case "WECHAT_WEB":
+			return LoginUserType.WECHAT_WEB;
+		case "PLAIN_WEB":
+			return LoginUserType.WEB;
+		default:
+			return LoginUserType.OTHER;
+		}
+	}
 }

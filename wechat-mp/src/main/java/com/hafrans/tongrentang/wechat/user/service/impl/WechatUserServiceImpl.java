@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.hafrans.tongrentang.wechat.config.WechatMPInfoConfig;
+import com.hafrans.tongrentang.wechat.user.dao.UserMapper;
 import com.hafrans.tongrentang.wechat.user.domain.vo.Code2SessionResponse;
 import com.hafrans.tongrentang.wechat.user.service.WechatUserService;
 import com.hafrans.tongrentang.wechat.utils.WxMappingJackson2HttpMessageConverter;
@@ -27,6 +28,9 @@ public class WechatUserServiceImpl implements WechatUserService {
 	
 	@Autowired
 	WechatMPInfoConfig wechatConfig;
+	
+	@Autowired
+	UserMapper userMapper;
 	
 	
 	@Override

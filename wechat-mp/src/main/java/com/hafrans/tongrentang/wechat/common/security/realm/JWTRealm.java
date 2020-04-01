@@ -1,8 +1,6 @@
 package com.hafrans.tongrentang.wechat.common.security.realm;
 
 
-import javax.annotation.PostConstruct;
-
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -12,20 +10,13 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import com.hafrans.tongrentang.wechat.common.security.SystemUserPrincipal;
 import com.hafrans.tongrentang.wechat.common.security.token.JWTToken;
 import com.hafrans.tongrentang.wechat.user.dao.UserMapper;
 import com.hafrans.tongrentang.wechat.user.domain.entity.User;
 
-import lombok.extern.slf4j.Slf4j;
 
-
-@Slf4j
 public class JWTRealm extends AuthorizingRealm{
 	
 	@Autowired

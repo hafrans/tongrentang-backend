@@ -18,7 +18,7 @@ public class SwaggerConfiguration {
 	public Docket docket() {
 		
 		Docket docket = new Docket(DocumentationType.SWAGGER_2);
-		docket.pathMapping("/api-document")
+		docket.pathMapping("/")
 			  .select()
 			  .apis(RequestHandlerSelectors.basePackage("com.hafrans.tongrentang.wechat"))
 			  .build()

@@ -21,13 +21,13 @@ public class CachedSubjectService {
 		CachedSubjectService.service = service;
 	}
 	
-	@Cacheable(value="subject-cache-",key="#claims.id")
+	@Cacheable(value="subject-cache-",key="#claims.subject")
 	public Subject getSubject(ServletRequest request, ServletResponse response, UserClaims claims, Subject subject) {
 		System.out.println("<<<<<<<<<<<<<<<<<< not hited");
 		return subject;
 	}
 	
-	@CacheEvict(value="subject-cache-",key="#claims.id")
+	@CacheEvict(value="subject-cache-",key="#claims.subject")
 	public void refresh(UserClaims claims) {
 		
 	}

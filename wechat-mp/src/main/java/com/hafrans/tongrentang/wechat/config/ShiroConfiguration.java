@@ -26,10 +26,8 @@ import com.hafrans.tongrentang.wechat.common.security.realm.JWTRealm;
 import com.hafrans.tongrentang.wechat.common.security.realm.UsernamePasswordRealm;
 import com.hafrans.tongrentang.wechat.common.security.service.CachedSubjectService;
 
-import lombok.extern.slf4j.Slf4j;
 
 @Configuration
-@Slf4j
 public class ShiroConfiguration {
 
 	public final static int SHIRO_CREDIENTIAL_ITERATION = 50;
@@ -61,11 +59,12 @@ public class ShiroConfiguration {
 	 * @return
 	 */
 	@Bean
-	protected SessionStorageEvaluator sessionStorageEvaluator() {
+	public SessionStorageEvaluator sessionStorageEvaluator() {
 		DefaultWebSessionStorageEvaluator sessionStorageEvaluator = new DefaultWebSessionStorageEvaluator();
 		sessionStorageEvaluator.setSessionStorageEnabled(false);
 		return sessionStorageEvaluator;
 	}
+		
 	
 	@Bean
 	public SecurityManager securityManager(JWTRealm jwtRealm, UsernamePasswordRealm uRealm) {
@@ -104,6 +103,8 @@ public class ShiroConfiguration {
 		sffb.setSecurityManager(sm);
 		
 		Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
+		filterChainDefinitionMap.put("/api/wx/v1/user/", "anon");
+		filterChainDefinitionMap.put("/api/wx/v1/user/login", "anon");
 		filterChainDefinitionMap.put("/api/wx/**", "testc");
 		filterChainDefinitionMap.put("/**", "anon");
 		

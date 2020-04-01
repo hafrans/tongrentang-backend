@@ -10,7 +10,5 @@ public interface WechatUserService {
 	 * @return Code2SessionResponse 
 	 */
 	public Code2SessionResponse login(String jsCode);
-	
-	
-	
+		
 }

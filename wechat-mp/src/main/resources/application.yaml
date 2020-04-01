@@ -12,6 +12,8 @@ spring:
     username: test
     password: test1
     
+trtconfig:
+  expire-time: 3600000
 
 wechat:
   mp:
@@ -32,6 +34,8 @@ pagehelper:
 mybatis:
   mapper-locations:
     - classpath:/mapper/**/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl 
   
   
     

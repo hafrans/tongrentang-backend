@@ -1,8 +1,5 @@
 package com.hafrans.tongrentang.wechat.common.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.hafrans.tongrentang.wechat.user.dao.UserMapper;
 import com.hafrans.tongrentang.wechat.user.domain.entity.User;
 
 import lombok.NoArgsConstructor;

@@ -1,5 +1,7 @@
 package com.hafrans.tongrentang.wechat.common.controller;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
@@ -11,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.hafrans.tongrentang.wechat.common.status.exception.StatusException;
+import com.hafrans.tongrentang.wechat.common.vo.ResponseData;
 
 @RequestMapping("/")
 @RestController
@@ -37,14 +42,9 @@ public class CommonIndexController {
 	}
 	
 	@RequestMapping("/loginfailed")
-	public ResponseEntity<Map<String,Object>> unauthorized(HttpServletRequest req){
-		Map<String, Object> map = new LinkedHashMap<String, Object>();
-		map.put("errcode", 610002);
-		map.put("errmsg","login:failed");
-		map.put("description", req.getAttribute("err"));
-		map.put("timestamp",LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-		
-		return new ResponseEntity<Map<String,Object>>(map,HttpStatus.ACCEPTED);
+	public ResponseData<Object> unauthorized(HttpServletRequest req){
+		StatusException se = (StatusException) req.getAttribute("err");
+		return ResponseData.Builder(se.getStatus(), se.getMessage(), Timestamp.from(Instant.now()), null);
 	}
 	
 }

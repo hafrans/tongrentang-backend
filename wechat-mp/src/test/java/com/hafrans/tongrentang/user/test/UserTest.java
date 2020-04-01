@@ -3,7 +3,6 @@ package com.hafrans.tongrentang.user.test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.junit.jupiter.api.BeforeAll;
@@ -27,7 +26,6 @@ import org.yaml.snakeyaml.util.UriEncoder;
 
 import com.hafrans.tongrentang.TestApplication;
 import com.hafrans.tongrentang.wechat.Application;
-import com.hafrans.tongrentang.wechat.user.domain.entity.User;
 
 @SpringBootTest(classes= {Application.class,TestApplication.class})
 @ExtendWith(SpringExtension.class)
@@ -86,17 +84,10 @@ public class UserTest {
 		if(subject.isAuthenticated()) {
 			System.out.println("已经登录成功");
 		}else {
+			@SuppressWarnings("unused")
 			UsernamePasswordToken token = new UsernamePasswordToken();
 		}
 		
-		
 	}
-	
-	
-	
-	
-	
-	
-	
 	
 }
