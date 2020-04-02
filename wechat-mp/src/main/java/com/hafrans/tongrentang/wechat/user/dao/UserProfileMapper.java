@@ -1,7 +1,9 @@
 package com.hafrans.tongrentang.wechat.user.dao;
 
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.SelectKey;
 import org.apache.ibatis.annotations.Update;
 
 import com.hafrans.tongrentang.wechat.user.domain.entity.UserProfile;
@@ -28,6 +30,22 @@ public interface UserProfileMapper {
 		  + "email = #{email}"
 		  + "where id = #{id}")
 	public int update(UserProfile userProfile);
+	
+	
+	@Insert("insert into user_profile (nick_name, gender, language, city, province,"
+			+ "country, avatarurl, appid, phone, phone_country_code, phone_pure, email)"
+			+ "VALUES ("
+			+ "#{nickName}, #{gender}, #{language}, #{city}, #{province}, #{country}, #{avatarUrl}, "
+			+ "#{appid}, #{phone}, #{phoneCountryCode},#{phonePure}, #{email} )")
+	public int create(UserProfile userProfile);
+	
+	@Insert("insert into user_profile (nick_name, gender, language, city, province,"
+			+ "country, avatarurl, appid, phone, phone_country_code, phone_pure, email)"
+			+ "VALUES ("
+			+ "#{nickName}, #{gender}, #{language}, #{city}, #{province}, #{country}, #{avatarUrl}, "
+			+ "#{appid}, #{phone}, #{phoneCountryCode},#{phonePure}, #{email} )")
+	@SelectKey(before=false,keyProperty="id",resultType=Long.class,statement="select currval('user_profile_id_seq') as id")
+	public int createAndGetKey(UserProfile userProfile);
 	
 	//不提供delete
 

@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,7 +23,7 @@ import springfox.documentation.annotations.ApiIgnore;
 @RestController
 public class CommonIndexController {
 
-	@GetMapping("/login")
+	@RequestMapping("/login")
 	@ApiIgnore
 	public ResponseEntity<Map<String,Object>> login(){
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
@@ -35,7 +34,7 @@ public class CommonIndexController {
 		return new ResponseEntity<Map<String,Object>>(map,HttpStatus.ACCEPTED);
 	} 
 	
-	@GetMapping("/unauthorized")
+	@RequestMapping("/unauthorized")
 	@ApiIgnore
 	public ResponseEntity<Map<String,Object>> unauthorized(){
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
@@ -46,7 +45,7 @@ public class CommonIndexController {
 		return new ResponseEntity<Map<String,Object>>(map,HttpStatus.ACCEPTED);
 	}
 	
-	@GetMapping("/loginfailed")
+	@RequestMapping("/loginfailed")
 	@ApiIgnore
 	public ResponseData<Object> unauthorized(HttpServletRequest req){
 		StatusException se = (StatusException) req.getAttribute("err");

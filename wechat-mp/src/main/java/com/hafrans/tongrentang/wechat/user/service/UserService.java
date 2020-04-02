@@ -5,7 +5,9 @@ import com.hafrans.tongrentang.wechat.common.security.SystemUserPrincipal;
 import com.hafrans.tongrentang.wechat.common.security.UserClaims;
 import com.hafrans.tongrentang.wechat.common.status.exception.StatusException;
 import com.hafrans.tongrentang.wechat.user.domain.entity.User;
+import com.hafrans.tongrentang.wechat.user.domain.vo.BasicUserInfoWithToken;
 import com.hafrans.tongrentang.wechat.user.domain.vo.Code2SessionResponse;
+import com.hafrans.tongrentang.wechat.user.domain.vo.WechatMPRegister;
 import com.hafrans.tongrentang.wechat.user.exception.UserNotFoundException;
 
 public interface UserService {
@@ -50,5 +52,16 @@ public interface UserService {
 	 */
 	public String refreshTokenByPrincipal(SystemUserPrincipal principal) throws StatusException, UserNotFoundException;
 	
+	
+	
+	/**
+	 * register via wechat mp
+	 * @param c2sp  
+	 * @param regform
+	 * @return BasicUserInfoWithToken
+	 * @throws StatusException 
+	 * @throws UserNotFoundException 
+	 */
+	public BasicUserInfoWithToken registerViaWechatMP(Code2SessionResponse c2sp, WechatMPRegister regform) throws StatusException, UserNotFoundException;
 
 }

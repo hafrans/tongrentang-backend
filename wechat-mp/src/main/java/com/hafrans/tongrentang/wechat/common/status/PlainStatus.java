@@ -1,5 +1,8 @@
 package com.hafrans.tongrentang.wechat.common.status;
 
+import io.swagger.annotations.ApiModel;
+
+@ApiModel(value="status")
 public class PlainStatus {
 	
 	public final static int STATUS_OK             = 0;
@@ -14,7 +17,15 @@ public class PlainStatus {
 	public final static int STATUS_LOGIN_FAILED                = 10001;
 	public final static int STATUS_LOGIN_FAILED_LOCKED         = 10002;
 	public final static int STATUS_LOGIN_FAILED_INVALID_OPENID = 10003;
-	public final static int STTAUS_LOGIN_NOT_REGISTERED        = 10004;
+	public final static int STATUS_LOGIN_NOT_REGISTERED        = 10004;
+	
+	public final static int STATUS_REGISTER_SUCCESS               = 10010;
+	public final static int STATUS_REGISTER_FAILED                = 10011;
+	public final static int STATUS_REGISTER_SUSPENDED             = 10012;
+	public final static int STATUS_REGISTER_FAILED_INVALID_OPENID = 10013;
+	public final static int STATUS_REGISTER_ALREADY_REGISTERED    = 10014;
+	public final static int STATUS_REGISTER_BAD_SIGNATURE         = 10015;
+	
 	
 	public final static int STATUS_JWT_SUCCESS        = 10010;
 	public final static int STATUS_JWT_EXPIRED        = 10011;

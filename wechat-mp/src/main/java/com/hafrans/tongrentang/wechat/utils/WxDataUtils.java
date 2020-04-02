@@ -1,5 +1,7 @@
 package com.hafrans.tongrentang.wechat.utils;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 
 import javax.crypto.Cipher;
@@ -51,6 +53,21 @@ public class WxDataUtils {
 		}
 		
 		return Optional.fromNullable(new String(result));
+	}
+	
+	
+	public static boolean checkSignature(String content, String sig) throws NoSuchAlgorithmException {
+		
+		MessageDigest md = MessageDigest.getInstance("SHA1");
+		byte[] result = md.digest(content.getBytes());
+		
+		StringBuilder sb = new StringBuilder();
+		for (byte b : result) {
+			sb.append(String.format("%02x", b & 0xff));
+		}
+		return sb.toString().contentEquals(sig);
+		
+		
 	}
 	
 	

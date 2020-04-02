@@ -7,6 +7,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.validation.Valid;
+
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,8 +27,10 @@ import com.hafrans.tongrentang.wechat.common.vo.ResponseData;
 import com.hafrans.tongrentang.wechat.user.dao.UserMapper;
 import com.hafrans.tongrentang.wechat.user.domain.entity.UserProfile;
 import com.hafrans.tongrentang.wechat.user.domain.vo.BasicUserInfo;
+import com.hafrans.tongrentang.wechat.user.domain.vo.BasicUserInfoWithToken;
 import com.hafrans.tongrentang.wechat.user.domain.vo.Code2SessionResponse;
 import com.hafrans.tongrentang.wechat.user.domain.vo.Token;
+import com.hafrans.tongrentang.wechat.user.domain.vo.WechatMPRegister;
 import com.hafrans.tongrentang.wechat.user.exception.UserNotFoundException;
 import com.hafrans.tongrentang.wechat.user.service.UserService;
 import com.hafrans.tongrentang.wechat.user.service.WechatUserService;
@@ -71,8 +75,7 @@ public class WechatUserIndexController {
 	public ResponseData<Token> login(@RequestParam(name = "js_code", required = true) String jsCode)
 			throws UserNotFoundException, StatusException {
 		Code2SessionResponse resp = wechatUserService.login(jsCode);
-		System.out.println(resp);
-		if (resp.getOpenId() == null || "".equals(resp.getOpenId())) { // fetch openId from wechat server.
+		if (resp.getOpenId() == null || resp.getErrcode() != 0) { // fetch openId from wechat server.
 			return ResponseData.Builder(PlainStatus.STATUS_LOGIN_FAILED_INVALID_OPENID, "js_code is invalid", null);
 		} // if
 
@@ -81,10 +84,20 @@ public class WechatUserIndexController {
 
 	}
 
-	@GetMapping("/register")
-	public Map<String, String> login(@RequestBody Map<String, String> body) {
-		return body;
-
+	@PostMapping("/register") 
+	@ApiOperation(value="用户注册",notes="新申请一个login的jscode 以及将userinfo的加密内容上传到服务器，完成注册后返回token与userinfo")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name="regform",dataTypeClass=WechatMPRegister.class,required=true,value="userinfo与login jscode串的json对象",allowEmptyValue=false)
+	})
+	@ApiResponse(code=200,message="userinfo与token串")
+	public ResponseData<BasicUserInfoWithToken> login(@RequestBody @Valid WechatMPRegister regform) throws StatusException, UserNotFoundException {
+		String jsCode = regform.getCode();
+		Code2SessionResponse resp = wechatUserService.login(jsCode);
+		if (resp.getOpenId() == null || resp.getErrcode() != 0) { // fetch openId from wechat server.
+			return ResponseData.Builder(PlainStatus.STATUS_LOGIN_FAILED_INVALID_OPENID, "js_code is invalid", null);
+		} // if
+		BasicUserInfoWithToken buiwt = userService.registerViaWechatMP(resp, regform);
+		return ResponseData.Builder(PlainStatus.STATUS_REGISTER_SUCCESS, "user register success", buiwt);
 	}
 
 	@GetMapping("/refresh")
@@ -101,6 +114,8 @@ public class WechatUserIndexController {
 		String token = userService.refreshTokenByPrincipal(principal);
 		return ResponseData.Builder(PlainStatus.STATUS_JWT_SUCCESS, "jwt update success", new Token(token));
 	}
+	
+	
 
 	@ApiOperation(value="获取用户基本信息", notes="只含有基本信息")
 	@ApiResponse(code=200,message="基本信息")
@@ -113,9 +128,11 @@ public class WechatUserIndexController {
 		}
 		UserProfile profile = pp.getUser().getProfile();
 	
-		BasicUserInfo userinfo = new BasicUserInfo(profile.getAvatarUrl(),profile.getNickName(),profile.getGender()
-				,profile.getLanguage());
+		BasicUserInfo userinfo = BasicUserInfo.populate(profile);
+		
 		return ResponseData.Builder(PlainStatus.STATUS_OK, "userinfo:ok", Timestamp.from(Instant.now()),userinfo);
 	}
+	
+	
 
 }

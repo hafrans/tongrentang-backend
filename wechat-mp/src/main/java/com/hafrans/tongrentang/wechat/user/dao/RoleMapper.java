@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Many;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Result;
@@ -34,6 +35,14 @@ public interface RoleMapper {
 	@Select("select id , role_name as name, role_descriptor as descriptor, create_at as createat from roles where id = #{id}")
 	public Role queryOneById(long id);
 	
+	
+	@ResultMap("role")
+	@Select("select id , role_name as name, role_descriptor as descriptor, create_at as createat from roles where role_descriptor = #{descriptor}")
+	public Role queryOneByDescriptor(String descriptor);
+	
+	@Insert("insert into role (role_name, role_descriptor, create_at) values (#{name},#{descriptor},localtimestamp)")
+	public int create(Role role);
+		
 	
 	@Delete("delete from roles where id = ${id}")
 	public int deleteById(long id);

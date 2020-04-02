@@ -105,6 +105,7 @@ public class ShiroConfiguration {
 		Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
 		filterChainDefinitionMap.put("/api/wx/v1/user/", "anon");
 		filterChainDefinitionMap.put("/api/wx/v1/user/login", "anon");
+		filterChainDefinitionMap.put("/api/wx/v1/user/register", "anon");
 		filterChainDefinitionMap.put("/api/wx/**", "testc");
 		filterChainDefinitionMap.put("/**", "anon");
 		

@@ -61,6 +61,9 @@ public interface UserRoleMapper {
 	@Insert("insert into user_role (user_id, role_id) values (#{userId}, #{roleId})")
 	public int create(UserRole role);
 	
+	@Insert("insert into user_role (user_id, role_id) values (#{userId}, #{roleId})")
+	public int createDirectly(@Param("userId") long userId, @Param("roleId") long roleId);
+	
 	@Delete("delete from user_role where id = #{id}")
 	public int deleteById(long id);
 	

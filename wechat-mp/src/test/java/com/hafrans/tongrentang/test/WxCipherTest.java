@@ -1,21 +1,19 @@
 package com.hafrans.tongrentang.test;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import java.security.NoSuchAlgorithmException;
+
+import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
-import com.hafrans.tongrentang.wechat.Application;
 import com.hafrans.tongrentang.wechat.user.domain.bo.WxEncryptedUserInfo;
 import com.hafrans.tongrentang.wechat.utils.WxDataUtils;
 
-@AutoConfigureMockMvc
-@SpringBootTest(classes= {Application.class})
-@ExtendWith(SpringExtension.class)
+//@AutoConfigureMockMvc
+//@SpringBootTest(classes= {Application.class})
+//@ExtendWith(SpringExtension.class)
 public class WxCipherTest {
 	
 	@Test
@@ -38,6 +36,20 @@ public class WxCipherTest {
 			e.printStackTrace();
 		}
 		
+		
+		
+	}
+	
+	@Test
+	public void SignatureTest() {
+		
+		try {
+			boolean b = WxDataUtils.checkSignature("{\"nickName\":\"Band\",\"gender\":1,\"language\":\"zh_CN\",\"city\":\"Guangzhou\",\"province\":\"Guangdong\",\"country\":\"CN\",\"avatarUrl\":\"http://wx.qlogo.cn/mmopen/vi_32/1vZvI39NWFQ9XM4LtQpFrQJ1xlgZxx3w7bQxKARol6503Iuswjjn6nIGBiaycAjAtpujxyzYsrztuuICqIM5ibXQ/0\"}HyVFkGl5F5OQWJZZaNzBBg==","75e81ceda165f4ffa64f4068af58c64b8f54b88c" );
+			assertThat(b).isEqualTo(true);
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
 	}
