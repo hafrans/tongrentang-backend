@@ -41,8 +41,6 @@ public class WechatUserServiceImpl implements WechatUserService {
 			return null;
 		}
 		
-		log.info("WechatUserServiceImpl@login","do login");
-		
 		RestTemplate restTemplate = new RestTemplateBuilder()
 				.rootUri(wechatConfig.getCode2SessionUri())
 				.setConnectTimeout(Duration.ofSeconds(10))
@@ -54,13 +52,10 @@ public class WechatUserServiceImpl implements WechatUserService {
 		map.put("appid", wechatConfig.getAppId());
 		map.put("secret", wechatConfig.getSecret());
 		map.put("jscode", jsCode);
-		
 
 		ResponseEntity<Code2SessionResponse> resp = restTemplate.getForEntity(wechatConfig.getCode2SessionUri(), 
 																		      Code2SessionResponse.class,
 																		      map);
-		
-		log.debug("code2session login" + resp.getBody());
 		
 		return resp.getBody();
 	}

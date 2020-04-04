@@ -58,6 +58,7 @@ public class WechatUserIndexController {
 	@Autowired
 	UserMapper userMapper;
 
+	
 	@GetMapping("/")
 	@ApiOperation(value = "小程序登录系统ping", notes = "系统运行时可以通过该接口测试系统是否能够正常使用", produces = "json")
 	public ResponseEntity<Map<String, String>> index() {
@@ -66,7 +67,8 @@ public class WechatUserIndexController {
 		map.put("timestamp", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 		return new ResponseEntity<Map<String, String>>(map, HttpStatus.ACCEPTED);
 	}
-
+	
+	
 	@PostMapping("/login")
 	@ApiOperation(httpMethod = "POST", produces = "application/json", value = "小程序登录", notes = "小程序尝试登录并返回令牌")
 	@ApiImplicitParams({
@@ -74,6 +76,7 @@ public class WechatUserIndexController {
 	@ApiResponses({ @ApiResponse(code = 200, message = "响应消息") })
 	public ResponseData<Token> login(@RequestParam(name = "js_code", required = true) String jsCode)
 			throws UserNotFoundException, StatusException {
+		
 		Code2SessionResponse resp = wechatUserService.login(jsCode);
 		if (resp.getOpenId() == null || resp.getErrcode() != 0) { // fetch openId from wechat server.
 			return ResponseData.Builder(PlainStatus.STATUS_LOGIN_FAILED_INVALID_OPENID, "js_code is invalid", null);
@@ -83,6 +86,7 @@ public class WechatUserIndexController {
 		return ResponseData.Builder(PlainStatus.STATUS_LOGIN_SUCCESS, "login:success", new Token(token));
 
 	}
+	
 
 	@PostMapping("/register") 
 	@ApiOperation(value="用户注册",notes="新申请一个login的jscode 以及将userinfo的加密内容上传到服务器，完成注册后返回token与userinfo")
@@ -100,6 +104,7 @@ public class WechatUserIndexController {
 		return ResponseData.Builder(PlainStatus.STATUS_REGISTER_SUCCESS, "user register success", buiwt);
 	}
 
+	
 	@GetMapping("/refresh")
 	@ApiOperation(value = "更新令牌", notes = "直接带token访问本接口刷新现有令牌")
 	@ApiResponses({ @ApiResponse(code = 200, message = "响应消息") })
@@ -116,7 +121,6 @@ public class WechatUserIndexController {
 	}
 	
 	
-
 	@ApiOperation(value="获取用户基本信息", notes="只含有基本信息")
 	@ApiResponse(code=200,message="基本信息")
 	@GetMapping("/userinfo")
@@ -132,7 +136,6 @@ public class WechatUserIndexController {
 		
 		return ResponseData.Builder(PlainStatus.STATUS_OK, "userinfo:ok", Timestamp.from(Instant.now()),userinfo);
 	}
-	
 	
 
 }
